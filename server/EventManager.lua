@@ -72,14 +72,11 @@ end
 
 function EventManager:register(key, event)
 	EventManager.constructors[key] = event
+	EventManager.constructors[key].name = key
 end
 
 function EventManager:getName(event)
-	for name, class in pairs(EventManager.constructors) do
-		if (class == event) then
-			return name
-		end
-	end
+	return event.name
 end
 
 function EventManager:getByName(name)
