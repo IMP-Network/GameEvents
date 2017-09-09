@@ -51,7 +51,7 @@ function GunGame:onPlayerEnter(player)
 end
 
 function GunGame:spawnPlayer(player)
-	if(self.started) then
+	if (self.started) then
 		local spawn = self.map.spawns[math.random(#self.map.spawns)]
 		player:setPosition(spawn.posX, spawn.posY, spawn.posZ)
 		player:setRotation(0, 0, spawn.angleZ)
@@ -60,6 +60,7 @@ function GunGame:spawnPlayer(player)
 		player:setHealth(100)
 		player:setArmor(player, 100)
 		player:setMoney(player, 0)
+		giveWeapon(player,self.weaponList[player:getData("event.level")], 9999, true)
 		exports.Spawn:setPlayerSpawnWeapons(player, {self.weaponList[player:getData("event.level")], 9999, true})
 	else
 		self.lobby:addPlayer(player)
