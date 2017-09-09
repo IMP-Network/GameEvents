@@ -42,15 +42,15 @@ function EventManager.create(player,command,name,...)
 	end
 
 	self.event = event
+	if (not event:onCreate()) then
+		EventManager.destroy()
+	end
+	
 	self.players =  {}
 	self.onRequestJoin = function(player)
-		self.event:addPlayer(player)
+		self.event:onPlayerEnter(player)
 	end
 	addCommandHandler("participar",self.onRequestJoin)
-
-	if (event:onCreate()) then
-		outputDebugString("event:onCreate")
-	end	
 end
 addCommandHandler("event",EventManager.create,true)
 
