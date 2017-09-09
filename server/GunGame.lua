@@ -61,9 +61,54 @@ function GunGame:spawnPlayer(player)
 		player:setArmor(player, 100)
 		player:setMoney(player, 0)
 		giveWeapon(player,self.weaponList[player:getData("event.level")], 9999, true)
-		exports.Spawn:setPlayerSpawnWeapons(player, {self.weaponList[player:getData("event.level")], 9999, true})
 	else
 		self.lobby:addPlayer(player)
 	end
 	return false
+end
+
+function GunGame:updatePlayerPoints(player,points)
+	local currentPoints = player:getData("event.points")
+	player:setData("event.points", currentPoints+(points))
+	self.eventHud:updateInfo(player,"POINTS "..tostring(points))			
+end
+
+function GunGame:onPlayerWasted(player, totalAmmo, killer, killerWeapon, bodypart, stealth)	
+	if(not self.started) then
+		return
+	end
+	--It is necessary to recreate part of this function in the client, for better performance in future
+	if (player:getData("event") == self.source) then
+		if (isElement(killer) and player ~= killer) then
+			if (killer:getData("event")) then
+				local points = killer:getData(killer, "event.points") or 0
+				if(bodypart == 9) then
+					self.eventHud:display(killer, "+100", "HEAD-SHOT")
+					self:updatePlayerPoints(killer,+100)
+					killer:triggerEvent("playSound", resourceRoot, "headShot")
+				else
+					local killspree = (killer:getData("event.killspree") or 0) + 1
+					killer:setData("event.killspree", killspree, false)
+					local data = eventHud.killSpreeData[killspree]
+					if(data) then
+						killer:triggerEvent("playSound", resourceRoot, "killspree")
+						self.eventHud:display(killer, "+50", data.msg)
+					else
+						self.eventHud:display(killer, "+50", "GOOD")
+					end
+					self:updatePlayerPoints(killer,+50)
+				end
+
+				local level = math.max(killer:getData("event.level")+1, #self.weaponList)
+				killer:setData("event.level", level, false)
+				takeAllWeapons(killer)
+				giveWeapon(killer, self.weaponList[level], 9999, true)
+
+			end
+		else
+			self:updatePlayerPoints(player,-100)
+			player:setData("event.level", math.min(math.max(1,(player:getData( "event.level") or 0) - 1), #self.weaponList), false)
+		end
+		player:setData("event.killspree", 0, false)
+	end
 end
