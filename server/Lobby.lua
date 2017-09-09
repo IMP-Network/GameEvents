@@ -1,5 +1,6 @@
 Lobby = {}
 Lobby.__index = Lobby
+Lobby.__parent = EventManager
 Lobby.players = {}
 
 Lobby.positions = {
