@@ -33,3 +33,19 @@ function GunGame:onCreate()
 	end
 	return false
 end
+
+function GunGame:onPlayerEnter(player)
+	if (self.started) then
+		return player:outputChat("[GUN-GAME] #00FF00O evento já foi iniciado...", 255, 100, 100, true)
+	end	
+	if (player:getData("event")) then
+		return player:outputChat("[GUN-GAME] #00FF00Você já está no evento...", 255, 100, 100, true)
+	end
+
+	EventManager.onPlayerEnter(player)
+	self:spawnPlayer(player)
+	player:setData("event.killspree", 0, false)
+	player:setData("event.level", 1, false)
+	self.scoreHud:setMode(player, "Lobby")
+	player:outputChat("[GUN-GAME] #00FF00Você entrou no lobby, aguarde outros players...", 255, 100, 100, true)
+end
