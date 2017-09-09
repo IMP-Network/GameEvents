@@ -1,6 +1,6 @@
-GunGame = setmetatable({}, Effect)
+GunGame = setmetatable({}, EventManager)
 GunGame.__index = GunGame
-GunGame.__parent = Effect
+GunGame.__parent = EventManager
 
 function GunGame:parseArgs(map, mins, value, stats) 
 	if(not map or not mins) then
@@ -13,3 +13,4 @@ function GunGame:parseArgs(map, mins, value, stats)
 	self.settings.stats = tonumber(stats) or 999
 	return true
 end
+
