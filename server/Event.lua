@@ -1,5 +1,5 @@
 local super = Class("GameEvent", LuaObject).getSuperclass()
-GameEvents.players = ArrayList();
+GameEvent.players = ArrayList();
 
 function GameEvent:init()
     super.init(self)
