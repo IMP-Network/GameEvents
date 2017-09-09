@@ -19,7 +19,7 @@ end
 
 function Lobby.isInside(element)
 	for index,player in pairs(Lobby.players)
-	    if(plyer == element) then
+	    if(player == element) then
 		    return true
 		end
 	end
