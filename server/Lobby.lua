@@ -1,7 +1,6 @@
 Lobby = {}
 Lobby.__index = Lobby
 Lobby.__parent = EventManager
-Lobby.players = {}
 
 Lobby.positions = {
 	{487.33, -4.62, 1002.08, 180},
@@ -17,8 +16,21 @@ end
 	
 
 function Lobby.addPlayer(player)
-	table.insert(Lobby.players, player);
-
+	
+	EventManager.players[player] = {};
+	EventManager.players[player].health = player.health
+	EventManager.players[player].armor = player.armor
+	EventManager.players[player].interior = player.interior
+	EventManager.players[player].dimension = player.dimension
+	EventManager.players[player].money = player.money
+	EventManager.players[player].weapons = getPlayerWeapons(player)
+	EventManager.players[player].position = {getElementPosition(player)}	
+	
+	player:takeAllWeapons()
+	player:setMoney(0)
+	player:setInterior(17)
+	player:setDimension(5)
+	
 	local posX, posY, posZ, posRot = unpack(Lobby.positions)
 	player.position = Vector3(posX, posY, posZ)
 	player.rotation = Vector3(0, 0, posRot)
