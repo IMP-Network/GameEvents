@@ -49,3 +49,20 @@ function GunGame:onPlayerEnter(player)
 	self.scoreHud:setMode(player, "Lobby")
 	player:outputChat("[GUN-GAME] #00FF00Você entrou no lobby, aguarde outros players...", 255, 100, 100, true)
 end
+
+function GunGame:spawnPlayer(player)
+	if(self.started) then
+		local spawn = self.map.spawns[math.random(#self.map.spawns)]
+		player:setPosition(spawn.posX, spawn.posY, spawn.posZ)
+		player:setRotation(0, 0, spawn.angleZ)
+		player:setInterior(player, spawn.interior)
+		player:setDimension(player, self.map.dimension)
+		player:setHealth(100)
+		player:setArmor(player, 100)
+		player:setMoney(player, 0)
+		exports.Spawn:setPlayerSpawnWeapons(player, {self.weaponList[player:getData("event.level")], 9999, true})
+	else
+		self.lobby:addPlayer(player)
+	end
+	return false
+end
