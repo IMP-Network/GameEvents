@@ -48,7 +48,9 @@ function EventManager.create(player,command,name,...)
 	end
 	addCommandHandler("participar",self.onRequestJoin)
 
-	event:onCreate()
+	if (event:onCreate()) then
+		outputDebugString("event:onCreate")
+	end	
 end
 addCommandHandler("event",EventManager.create,true)
 
