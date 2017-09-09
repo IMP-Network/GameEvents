@@ -56,7 +56,8 @@ addCommandHandler("event",EventManager.create,true)
 
 function EventManager:addPlayer(player)
 	table.insert(self.players,player)
-	-- save player data
+	
+	Lobby.addPlayer(player)
 end
 function EventManager:removePlayer(player,reason)
 	table.remove(self.players,player)
