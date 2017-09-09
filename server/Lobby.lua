@@ -11,7 +11,7 @@ Lobby.positions = {
 
 function Lobby.start(minutes)
     setTimer(function()
-	    EventManager.event:start()
+	    EventManager:open()
 	end, 60000*minutes, 1)
 end
 	
