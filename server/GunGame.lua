@@ -1,5 +1,5 @@
-local super = Class("GunGame", GameMode, function()
-	GameMode.register(static)
+local super = Class("GunGame", EventManager, function()
+	EventManager.register(static)
 end).getSuperclass()
 
 function GunGame:init()
