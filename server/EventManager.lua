@@ -60,6 +60,13 @@ function EventManager.create(player,command,name,...)
 end
 addCommandHandler("event",EventManager.create,true)
 
+function EventManager:finish()
+	self.event:onFinish()
+	self.players:each(function(player)
+		self.event:onPlayerExit(player,"finish")
+	end)
+end
+
 function EventManager:destroy(reason)
 	if (not self.event) then
 		return false
@@ -95,7 +102,7 @@ function EventManager:onPlayerExit(player,reason)
 	elseif(reason == "notPlayers") then
 		player:outputChat("[GUN-GAME] #00FF00Você destruido. (Não há jogadores o suficiente)", 255, 100, 100, true)
 	end
-	if (#self:getPlayers() == 1) then
+	if (#self.players == 1) then
 		self:destroy("notPlayers")
 	end
 end
