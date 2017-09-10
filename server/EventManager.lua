@@ -9,6 +9,7 @@ local super = Class("EventManager", LuaObject, function()
 end).getSuperclass()
 
 function EventManager:init()
+	self.settings = {}
 	self.players = {}
 	self.data = {}
 	self.eventHandlers = {}
