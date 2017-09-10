@@ -1,0 +1,11 @@
+<meta>
+    <info author="Banex, xeon17" version="1.0.0" name="Advanced Event System" type="script" />
+    <oop>true</oop>
+    
+    <!-- Shared -->
+    <script src="shared/util.lua" type="server" />	
+	
+    <!-- Server -->	
+    <script src="server/EventManager.lua" type="server" />		
+	
+</meta>
