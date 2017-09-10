@@ -115,12 +115,31 @@ function EventManager:savePlayerData(player)
 	self.data[player].interior = player.interior
 	self.data[player].dimension = player.dimension
 	self.data[player].money = player.money
+	self.data[player].skin = player.model
 	self.data[player].weapons = getPlayerWeapons(player)
 	self.data[player].position = {getElementPosition(player)}
 end
 
 function EventManager:restorePlayerData(player)
-	--
+	local data = self.data[player]
+	if(data) then
+	    if not(player:isDead()) then
+		    player:setDimension(data.dimension)
+		    player:setInterior(data.interior)
+		    player:setHealth(data.health)
+		    player:setArmor(data.armor)
+		    player:setPosition(unpack(data.position))
+		else
+		    player:spawn(unpack(data.position), data.skin, 90, data.interior, data.dimension)
+		end
+		
+		player:setMoney(data.money)
+		
+		for weapon,ammo in pairs(data.weapons)
+		    player:giveWeapon(weapon, ammo)
+		    player:setWeaponSlot(0)
+		end
+	end	
 end
 
 function EventManager:getPlayers()
