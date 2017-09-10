@@ -31,8 +31,8 @@ function GunGame:onCreate()
 	if (self.settings) then
 		self.map = self.mapLoader:load("deathmatch", self.settings.map)
 		if (self.map) then
-			root:outputChat(("[GUN-GAME] #00FF00 Evento em '%s' criado digite /participar para participar"):format(self.map.name), 255, 100, 100, true)	
-			self.lobby:start(1000 * 60)
+			root:outputChat(("[GUN-GAME] #00FF00 Evento %s criado digite /participar para participar"):format("GunGame"), 255, 100, 100, true)	
+			self.lobby:start(1)
 			outputDebugString("GunGame:onCreate")
 			return true
 		end
@@ -95,14 +95,14 @@ function GunGame:onFinish()
 end
 
 function GunGame:onDestroy(reason)
+	self.mapLoader:dispose("deathmatch")
 	self.lobby:dispose()
-	self.mapLoader:dispose()
 	self.eventHud:dispose()
 end
 
 function GunGame:spawnPlayer(player)
 	if (not self.started) then
-		return self.lobby:addPlayer(player)
+		return self.lobby:spawnPlayer(player)
 	end
 	local spawn = self.map.spawns[math.random(#self.map.spawns)]
 	player:setPosition(spawn.posX, spawn.posY, spawn.posZ)
