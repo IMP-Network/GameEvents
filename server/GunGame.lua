@@ -50,6 +50,7 @@ function GunGame:onPlayerEnter(player)
 	end
 
 	EventManager:getInstance():onPlayerEnter(player)
+	-- test later EventManager.onPlayerEnter(self,player)
 	self:spawnPlayer(player)
 	player:setData("event.killspree", 0, false)
 	player:setData("event.level", 1, false)
