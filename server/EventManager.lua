@@ -177,12 +177,15 @@ function EventManager:removeEventHandlers()
 end
 
 function EventManager:register(key, event)
-	EventManager.constructors[key].class = event
-	EventManager.constructors[key].name = key
+	table.insert(EventManager.constructors[key],{name = key, class = event})
 end
 
 function EventManager:getName(event)
-	return event.name
+	for _, v in pairs(EventManager.constructors) do
+		if (v.class = event) then
+			return v.name
+		end
+	end
 end
 
 function EventManager:getByName(name)
