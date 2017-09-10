@@ -1,46 +1,60 @@
-Lobby = {}
-Lobby.__index = Lobby
+Lobby = setmetatable({}, EventManager)
 Lobby.__parent = EventManager
-
-Lobby.positions = {
-	{487.33, -4.62, 1002.08, 180},
-	{484.98, -22.85, 1003.11, 360},
-	{474.81, -14.98, 1003.7, 180}
+Lobby.instance = nil
+Loby.MAPS - {
+	[1] {
+		interior = 17,
+		dimension = 17,
+		positions = {
+			{487.33, -4.62, 1002.08, 180},
+			{484.98, -22.85, 1003.11, 360},
+			{474.81, -14.98, 1003.7, 180}
+		},
+		--id = {}
+	}
 }
 
-function Lobby.start(minutes)
+function Lobby.getInstance()
+	if(Lobby.instance == nil) then
+		Lobby.instance = Lobby.create()
+	end
+	return Lobby.instance
+end
+
+function Lobby.create()
+	local self = setmetatable({}, Lobby)
+	
+	local map = Loby.MAPS[math.random(#Loby.MAPS)]
+	self.interior = map.interior
+	
+	if (map.id) then
+		self.mapLoader = MapLoader.getInstance()
+		self.mapLoader:load("lobby",map.id)
+	end
+	
+	return self
+end
+
+function Lobby:dispose()
+	self.mapLoader:dispose("lobby")
+	Lobby.instance = nil
+end
+
+function Lobby:start(minutes)
     setTimer(function()
-	    EventManager:open()
+	    EventManager:getInstance().event:onStart()
 	end, 60000*minutes, 1)
 end
-	
 
-function Lobby.addPlayer(player)
-	
-	EventManager.players[player] = {};
-	EventManager.players[player].health = player.health
-	EventManager.players[player].armor = player.armor
-	EventManager.players[player].interior = player.interior
-	EventManager.players[player].dimension = player.dimension
-	EventManager.players[player].money = player.money
-	EventManager.players[player].weapons = getPlayerWeapons(player)
-	EventManager.players[player].position = {getElementPosition(player)}	
-	
+function Lobby:spawnPlayer(player)	
 	player:takeAllWeapons()
 	player:setMoney(0)
-	player:setInterior(17)
-	player:setDimension(5)
+	player:setHealth(100)
+	player:setArmor(player, 100)
+	player:setInterior(self.interior)
+	player:setDimension(self.dimension)
 	
-	local posX, posY, posZ, posRot = unpack(Lobby.positions)
-	player.position = Vector3(posX, posY, posZ)
-	player.rotation = Vector3(0, 0, posRot)
-end
-
-function Lobby.isInside(element)
-	for index,player in pairs(Lobby.players)
-	    if(player == element) then
-		    return true
-		end
-	end
-	return false
+	local posX, posY, posZ, rot = unpack(self.positions[math.random(#self.positions)])
+	player:setPosition(posX, posY, posZ)
+	player:setRotation(0, 0, rot)
 end
