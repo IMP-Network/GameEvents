@@ -45,6 +45,7 @@ function EventManager.create(player,command,name,...)
 	self.event = event
 	self:addEvents()	
 	self.players = {}
+	self.data = {}
 
 	self.onRequestJoin = function(player)
 		self.event:onPlayerEnter(player)
@@ -108,7 +109,14 @@ function EventManager:onPlayerExit(player,reason)
 end
 
 function EventManager:savePlayerData(player)
-	--
+	self.data[player] = {}
+	self.data[player].health = player.health
+	self.data[player].armor = player.armor
+	self.data[player].interior = player.interior
+	self.data[player].dimension = player.dimension
+	self.data[player].money = player.money
+	self.data[player].weapons = getPlayerWeapons(player)
+	self.data[player].position = {getElementPosition(player)}
 end
 
 function EventManager:restorePlayerData(player)
