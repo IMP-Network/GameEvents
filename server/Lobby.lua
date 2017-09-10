@@ -1,8 +1,8 @@
 Lobby = setmetatable({}, EventManager)
 Lobby.__parent = EventManager
 Lobby.instance = nil
-Loby.MAPS = {
-	[1] {
+Lobby.MAPS = {
+	[1] = {
 		interior = 17,
 		dimension = 17,
 		positions = {
@@ -24,7 +24,7 @@ end
 function Lobby.create()
 	local self = setmetatable({}, Lobby)
 	
-	local map = Loby.MAPS[math.random(#Loby.MAPS)]
+	local map = Lobby.MAPS[math.random(#Lobby.MAPS)]
 	self.interior = map.interior
 	
 	if (map.id) then
