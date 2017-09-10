@@ -1,12 +1,10 @@
-GunGame = setmetatable({}, EventManager)
-GunGame.__parent = EventManager
-GunGame.instance = nil
+local super = Class("GunGame", GameMode, function()
+	GameMode.register(static)
+end).getSuperclass()
 
-function GunGame.getInstance()
-	if(not GunGame.instance) then
-		GunGame.instance = setmetatable({}, GunGame)
-	end
-	return GunGame.instance
+function GunGame:init()
+	super.init(self)
+	return self
 end
 
 function GunGame:parseArgs(map, mins, value, stats) 
@@ -49,8 +47,7 @@ function GunGame:onPlayerEnter(player)
 		return player:outputChat("[GUN-GAME] #00FF00Você já está no evento...", 255, 100, 100, true)
 	end
 
-	EventManager:getInstance():onPlayerEnter(player)
-	-- test later EventManager.onPlayerEnter(self,player)
+	super.onPlayerEnter(self, player)
 	self:spawnPlayer(player)
 	player:setData("event.killspree", 0, false)
 	player:setData("event.level", 1, false)
@@ -61,7 +58,7 @@ end
 function GunGame:onPlayerExit(player, reason)
 	player:removeData("event.killspree")
 	player:removeData("event.level")
-	EventManager:getInstance():onPlayerExit(player,reason)
+	super.onPlayerExit(self, player, reason)
 end
 
 function GunGame:onStart()
@@ -69,10 +66,10 @@ function GunGame:onStart()
 
 	local mins = self.settings.mins or 1
 	Timer(function()
-		EventManager:getInstance():finish() 
+		self:finish() 
 	end, 1000 * 60 * mins, 1)
 
-	EventManager:getInstance():getPlayers():each(function(player)
+	self.players:each(function(player)
 		self:spawnPlayer(player)
 		player:triggerEvent("playSound", resourceRoot, "event:prepare")
 	end)	
@@ -82,7 +79,7 @@ function GunGame:onFinish()
 	local winner = nil
 	local winnerPoints = 0
 	local value = self.settings.value
-	EventManager.getInstance():getPlayers():each(function(player)
+	self.players:each(function(player)
 		local points = player:getData("event.points") or 0
 		if(points > winnerPoints) then
 			winnerPoints = points
@@ -117,7 +114,7 @@ function GunGame:spawnPlayer(player)
 end
 
 function GunGame:onPlayerQuit(player, quitType, reason, responsibleElement)
-	EventManager:getInstance():removePlayer(player, "quit")
+	self.players:removePlayer(player, "quit")
 end
 
 function GunGame:updatePlayerPoints(player,points)
