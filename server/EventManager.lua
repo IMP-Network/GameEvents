@@ -169,22 +169,3 @@ end
 function EventManager:getByName(name)
 	return EventManager.constructors[name]
 end
-
-
-
--- Util
-function table.each(t, index, callback, ...)
-	local args = { ... }
-	if type(index) == 'function' then
-		table.insert(args, 1, callback)
-		callback = index
-		index = false
-	end
-	for k,v in pairs(t) do
-		if index then
-			v = v[index]
-		end
-		callback(v, unpack(args))
-	end
-	return t
-end
