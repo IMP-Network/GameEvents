@@ -1,24 +1,17 @@
-EventManager = {}
-EventManager.__index = EventManager
-EventManager.instance = nil
-EventManager.constructors = {}
-
-function EventManager.getInstance()
-	if(not EventManager.instance) then
-		EventManager.instance = EventManager.new():init()
+local super = Class("EventManager", LuaObject, function()
+	static.constructors = {}
+	static.register = function(event)
+		table.insert(static.constructors, event)
 	end
-	return EventManager.instance
-end
-
-function EventManager.new()
-	local self = setmetatable({}, EventManager)
-	self.event = nil
-	self.eventHandlers = {}
-	return self
-end
+	static.getInstance = function()
+		return LuaObject.getSingleton(static)
+	end
+end).getSuperclass()
 
 function EventManager:init()
-	self:register("GunGame", GunGame)
+	self.players = {}
+	self.data = {}
+	self.eventHandlers = {}
 	return self
 end
 
@@ -30,7 +23,7 @@ function EventManager.create(player,command,name,...)
 	if (self.event) then
 		return player:outputChat("[SERVER] Já possui um evento em andamento.", 255, 0, 0)
 	end
-	local event = self:getByName(name).getInstance()
+	local event = self:getByName(name)
 	if (not event) then
 		return player:outputChat(("[SERVER] Evento não encontrado."), 255, 0, 0)
 	end
@@ -43,10 +36,6 @@ function EventManager.create(player,command,name,...)
 	end
 
 	self.event = event
-	self:addEventHandlers()	
-	self.players = {}
-	self.data = {}
-
 	self.onRequestJoin = function(player)
 		self.event:onPlayerEnter(player)
 	end
@@ -59,7 +48,6 @@ function EventManager.create(player,command,name,...)
 	end
 	addCommandHandler("abandonar",self.onRequestLeave)
 end
-addCommandHandler("event",EventManager.create,true)
 
 function EventManager:finish()
 	self.event:onFinish()
@@ -142,10 +130,6 @@ function EventManager:restorePlayerData(player)
 	end	
 end
 
-function EventManager:getPlayers()
-	return self.players
-end
-
 function EventManager:addEventHandlers()
 	if (self.event.onPlayerQuit) then
 		self.eventHandlers.onPlayerQuit = function(...)
@@ -176,18 +160,18 @@ function EventManager:removeEventHandlers()
 	self.eventHandlers = {}
 end
 
-function EventManager:register(key, event)
-	table.insert(EventManager.constructors[key],{name = key, class = event})
+function EventManager:getPlayers()
+	return self.players
 end
 
 function EventManager:getName(event)
-	for _, v in pairs(EventManager.constructors) do
-		if (v.class = event) then
-			return v.name
-		end
-	end
+	return event.getClassName()
 end
 
 function EventManager:getByName(name)
-	return EventManager.constructors[name].class
+	for _, event in pairs(constructors) do
+		if (self:getName(event) == name) then
+			return event
+		end
+	end
 end
