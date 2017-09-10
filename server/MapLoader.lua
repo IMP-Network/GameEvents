@@ -109,6 +109,6 @@ end
 function MapLoader:register(type,name)
 	if (not MapLoader.constructors[type]) then
 		MapLoader.constructors[type] = {}
-	}
+	end
 	table.insert(MapLoader.constructors[type],{name = name, src = ("maps/%s/%s.map"):format(type,name)})
 end
