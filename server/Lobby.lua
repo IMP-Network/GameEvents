@@ -1,7 +1,7 @@
 Lobby = setmetatable({}, EventManager)
 Lobby.__parent = EventManager
 Lobby.instance = nil
-Loby.MAPS - {
+Loby.MAPS = {
 	[1] {
 		interior = 17,
 		dimension = 17,
