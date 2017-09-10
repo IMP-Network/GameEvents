@@ -6,6 +6,9 @@
     <script src="shared/util.lua" type="server" />	
 	
     <!-- Server -->	
-    <script src="server/EventManager.lua" type="server" />		
+    <script src="server/EventManager.lua" type="server" />
+    <script src="server/MapLoader.lua" type="server" />	
+    <script src="server/Lobby.lua" type="server" />
+    <script src="server/GunGame.lua" type="server" />	
 	
 </meta>
