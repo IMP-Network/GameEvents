@@ -22,7 +22,7 @@ end
 
 function GunGame:onCreate()
 	self.lobby = Lobby.getInstance()
-	self.eventHud = eventHud.getInstance()
+	--self.eventHud = eventHud.getInstance()
 	self.mapLoader = MapLoader.getInstance()
 	self.weaponList = {22,23,24,25,26,27,28,29,32,30,31,33,34,35,36,37,38}
 
@@ -51,7 +51,7 @@ function GunGame:onPlayerEnter(player)
 	self:spawnPlayer(player)
 	player:setData("event.killspree", 0, false)
 	player:setData("event.level", 1, false)
-	self.eventHud:setMode(player, "Lobby")
+	--self.eventHud:setMode(player, "Lobby")
 	player:outputChat("[GUN-GAME] #00FF00Você entrou no lobby, aguarde outros players...", 255, 100, 100, true)
 end
 
@@ -95,7 +95,7 @@ end
 function GunGame:onDestroy(reason)
 	self.mapLoader:dispose("deathmatch")
 	self.lobby:dispose()
-	self.eventHud:dispose()
+	--self.eventHud:dispose()
 end
 
 function GunGame:spawnPlayer(player)
@@ -120,7 +120,7 @@ end
 function GunGame:updatePlayerPoints(player,points)
 	local currentPoints = player:getData("event.points")
 	player:setData("event.points", currentPoints+(points))
-	self.eventHud:updateInfo(player,"POINTS "..tostring(points))			
+	--self.eventHud:updateInfo(player,"POINTS "..tostring(points))			
 end
 
 function GunGame:onPlayerWasted(player, totalAmmo, killer, killerWeapon, bodypart, stealth)	
@@ -133,18 +133,18 @@ function GunGame:onPlayerWasted(player, totalAmmo, killer, killerWeapon, bodypar
 			if (killer:getData("event")) then
 				local points = killer:getData(killer, "event.points") or 0
 				if(bodypart == 9) then
-					self.eventHud:display(killer, "+100", "HEAD-SHOT")
+					--self.eventHud:display(killer, "+100", "HEAD-SHOT")
 					self:updatePlayerPoints(killer,+100)
 					killer:triggerEvent("playSound", resourceRoot, "headShot")
 				else
 					local killspree = (killer:getData("event.killspree") or 0) + 1
 					killer:setData("event.killspree", killspree, false)
-					local data = eventHud.killSpreeData[killspree]
+					local data = --self.eventHud.killSpreeData[killspree]
 					if(data) then
 						killer:triggerEvent("playSound", resourceRoot, "killspree")
-						self.eventHud:display(killer, "+50", data.msg)
+						--self.eventHud:display(killer, "+50", data.msg)
 					else
-						self.eventHud:display(killer, "+50", "GOOD")
+						--self.eventHud:display(killer, "+50", "GOOD")
 					end
 					self:updatePlayerPoints(killer,+50)
 				end
