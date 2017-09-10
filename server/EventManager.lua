@@ -43,7 +43,7 @@ function EventManager.create(player,command,name,...)
 	end
 
 	self.event = event
-	self:addEvents()	
+	self:addEventHandlers()	
 	self.players = {}
 	self.data = {}
 
@@ -82,7 +82,7 @@ function EventManager:destroy(reason)
 
 	self.event:onDestroy()
 	self.event = nil
-	self:removeEvents()
+	self:removeEventHandlers()
 end
 
 function EventManager:onPlayerEnter(player)
@@ -135,7 +135,7 @@ function EventManager:restorePlayerData(player)
 		
 		player:setMoney(data.money)
 		
-		for weapon,ammo in pairs(data.weapons)
+		for weapon,ammo in pairs(data.weapons) do
 		    player:giveWeapon(weapon, ammo)
 		    player:setWeaponSlot(0)
 		end
@@ -146,7 +146,7 @@ function EventManager:getPlayers()
 	return self.players
 end
 
-function EventManager:addEvents()
+function EventManager:addEventHandlers()
 	if (self.event.onPlayerQuit) then
 		self.eventHandlers.onPlayerQuit = function(...)
 			if (source:getData("event")) then
@@ -169,7 +169,7 @@ function EventManager:addEvents()
 	end
 end
 
-function EventManager:removeEvents()
+function EventManager:removeEventHandlers()
 	for k, v in pairs(self.eventHandlers) do
 		removeEventHandler(k, root, self.eventHandlers.k)
 	end
@@ -177,7 +177,7 @@ function EventManager:removeEvents()
 end
 
 function EventManager:register(key, event)
-	EventManager.constructors[key] = event
+	EventManager.constructors[key].class = event
 	EventManager.constructors[key].name = key
 end
 
@@ -186,5 +186,5 @@ function EventManager:getName(event)
 end
 
 function EventManager:getByName(name)
-	return EventManager.constructors[name]
+	return EventManager.constructors[name].class
 end
