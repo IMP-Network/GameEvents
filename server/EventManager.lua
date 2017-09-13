@@ -109,13 +109,13 @@ end
 
 function EventManager:savePlayerData(player)
 	self.data[player] = {
-		health = player.health
-		armor = player.armor
-		interior = player.interior
-		dimension = player.dimension
-		money = player.money
-		skin = player.model
-		weapons = getPlayerWeapons(player)
+		health = player.health,
+		armor = player.armor,
+		interior = player.interior,
+		dimension = player.dimension,
+		money = player.money,
+		skin = player.model,
+		weapons = getPlayerWeapons(player),
 		position = {getElementPosition(player)}
 	}
 end
