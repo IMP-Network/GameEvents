@@ -49,13 +49,16 @@ function Class(name, super, static)
 	class.getClassName = function()
 		return name
 	end
+	class.getInstance = function()
+		return LuaObject.getSingleton(class)
+	end
 	function class:new()
 		local self = self or setmetatable({}, class)
 		super.new(self)
 		return self
 	end	
 	if(static) then
-		setfenv(static, setmetatable({def = class,class = class, static = class, super = super}, { __index = _G })) 
+		setfenv(static, setmetatable({static = class, super = super}, { __index = _G })) 
 		static()	
 	end	
 	return class
