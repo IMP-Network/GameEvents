@@ -3,16 +3,23 @@
     <oop>true</oop>
     
     <!-- Shared -->
-    <script src="shared/util.lua" type="server" />	
-    <script src="shared/class.lua" type="server" />	
+    <script src="shared/util.lua" type="shared" />
+	<script src="shared/class.lua" type="shared" />	
 	
     <!-- Server -->	
     <script src="server/EventManager.lua" type="server" />
+    <script src="server/EventHud.lua" type="server" />
     <script src="server/MapLoader.lua" type="server" />	
     <script src="server/Lobby.lua" type="server" />
-    <script src="server/GunGame.lua" type="server" />	
+    <script src="server/GunGame.lua" type="server" />
+	
+	<!-- Client -->	
+    <script src="client/main.lua" type="client" />	
  
     <!-- Maps -->
     <maploader src="maps/deathmatch/GunGame1.map" />
+    <maploader src="maps/deathmatch/Kickstart.map" />
+	
+    <maploader src="maps/lobby/Disco.map" />
 	
 </meta>
