@@ -3,9 +3,6 @@ local super = Class("EventManager", LuaObject, function()
 	static.register = function(event)
 		table.insert(static.constructors, event)
 	end
-	static.getInstance = function()
-		return LuaObject.getSingleton(static)
-	end
 end).getSuperclass()
 
 function EventManager:init()
@@ -13,13 +10,20 @@ function EventManager:init()
 	self.players = {}
 	self.data = {}
 	self.eventHandlers = {}
+	self.event = nil
 	return self
 end
 
 function EventManager.create(player,command,name,...)
+	if (player) then
+		player:setData("event",nil)
+	end
 	local self = EventManager.getInstance()
 	if (name == "destroy") then
 		return self:destroy()
+	end
+	if (not name) then
+		return player:outputChat("[SERVER] Use: /event <name>", 255, 0, 0)
 	end
 	if (self.event) then
 		return player:outputChat("[SERVER] Já possui um evento em andamento.", 255, 0, 0)
@@ -28,23 +32,18 @@ function EventManager.create(player,command,name,...)
 	if (not event) then
 		return player:outputChat(("[SERVER] Evento não encontrado."), 255, 0, 0)
 	end
-	if (not event:parseArgs(...)) then
-		return player:outputChat(("[SERVER] Use: /event %s %s"):format(name,event.argUsage), 255, 0, 0)
-	end
-
-	if (not self.event:onCreate()) then
-		return
-	end
 
 	self.event = event
+	event:parseArgs(...):onCreate()
+	self:addEventHandlers()
 	self.onRequestJoin = function(player)
-		self.event:onPlayerEnter(player)
+		self:onPlayerEnter(player)
 	end
 	addCommandHandler("participar",self.onRequestJoin)
 
 	self.onRequestLeave = function(player)
 		if (player:getData("event")) then
-			self.event:onPlayerExit(player)
+			self:onPlayerExit(player,"quit")
 		end
 	end
 	addCommandHandler("abandonar",self.onRequestLeave)
@@ -52,9 +51,7 @@ end
 
 function EventManager:finish()
 	self.event:onFinish()
-	self.players:each(function(player)
-		self.event:onPlayerExit(player,"finish")
-	end)
+	self:destroy("finish")
 end
 
 function EventManager:destroy(reason)
@@ -62,26 +59,39 @@ function EventManager:destroy(reason)
 		return false
 	end
 
-	self.players:each(function(player)
-		self.event:onPlayerExit(player, reason)
-	end)
+	for player, _ in pairs(self.players) do
+		self:onPlayerExit(player, reason)
+	end
 
-	removeEventHandler("participar",self.onRequestJoin)
-	removeEventHandler("abandonar",self.onRequestLeave)
+	removeCommandHandler("participar",self.onRequestJoin)
+	removeCommandHandler("abandonar",self.onRequestLeave)
 
 	self.event:onDestroy()
-	self.event = nil
 	self:removeEventHandlers()
+	self.event = nil
 end
 
 function EventManager:onPlayerEnter(player)
-	table.insert(self.players,player)
+	if (self.started) then
+		return outputChatBox("[GUN-GAME] #00FF00O evento já foi iniciado...", player, 255, 100, 100, true)
+	end	
+	if (player:getData("event")) then
+		return outputChatBox("[GUN-GAME] #00FF00Você já está no evento...", player, 255, 100, 100, true)
+	end
+	if (player.vehicle) then
+		player.vehicle = nil
+	end
+	self.players[player] = true
 	self:savePlayerData(player)
+	player:setData("event",true)
+	self.event:onPlayerEnter(player)
 end
 
 function EventManager:onPlayerExit(player,reason)
 	self:restorePlayerData(player)
-	table.remove(self.players,player)
+	self.event:onPlayerExit(player)
+	self.players[player] = nil
+	player:setData("event",nil)
 
 	if(reason == "destroy") then
 		player:outputChat("[GUN-GAME] #00FF00Evento destruido.", 255, 100, 100, true)
@@ -98,15 +108,16 @@ function EventManager:onPlayerExit(player,reason)
 end
 
 function EventManager:savePlayerData(player)
-	self.data[player] = {}
-	self.data[player].health = player.health
-	self.data[player].armor = player.armor
-	self.data[player].interior = player.interior
-	self.data[player].dimension = player.dimension
-	self.data[player].money = player.money
-	self.data[player].skin = player.model
-	self.data[player].weapons = getPlayerWeapons(player)
-	self.data[player].position = {getElementPosition(player)}
+	self.data[player] = {
+		health = player.health
+		armor = player.armor
+		interior = player.interior
+		dimension = player.dimension
+		money = player.money
+		skin = player.model
+		weapons = getPlayerWeapons(player)
+		position = {getElementPosition(player)}
+	}
 end
 
 function EventManager:restorePlayerData(player)
@@ -120,10 +131,9 @@ function EventManager:restorePlayerData(player)
 		    player:setPosition(unpack(data.position))
 		else
 		    player:spawn(unpack(data.position), data.skin, 90, data.interior, data.dimension)
-		end
-		
-		player:setMoney(data.money)
-		
+		end		
+		player:setMoney(data.money)		
+		takeAllWeapons(player)
 		for weapon,ammo in pairs(data.weapons) do
 		    player:giveWeapon(weapon, ammo)
 		    player:setWeaponSlot(0)
@@ -144,19 +154,21 @@ function EventManager:addEventHandlers()
 			if (source:getData("event")) then
 				self.event:onPlayerWasted(source,...)
 				if (self.event.spawnPlayer) then
-					self.event:spawnPlayer(source)
+					Timer(function(source)
+						self.event:spawnPlayer(source)
+					end, 4000, 1,source)
 				end
 			end
 		end
 	end
 	for k, v in pairs(self.eventHandlers) do
-		addEventHandler(k, root, self.eventHandlers.k)
+		addEventHandler(k, root, self.eventHandlers[k])
 	end
 end
 
 function EventManager:removeEventHandlers()
 	for k, v in pairs(self.eventHandlers) do
-		removeEventHandler(k, root, self.eventHandlers.k)
+		removeEventHandler(k, root, self.eventHandlers[k])
 	end
 	self.eventHandlers = {}
 end
@@ -165,14 +177,29 @@ function EventManager:getPlayers()
 	return self.players
 end
 
+function EventManager:getCurrentEvent()
+	return self.event
+end
+
 function EventManager:getName(event)
 	return event.getClassName()
 end
 
 function EventManager:getByName(name)
-	for _, event in pairs(constructors) do
-		if (self:getName(event) == name) then
-			return event
+	for _, event in pairs(EventManager.constructors) do
+		if (self:getName(event):lower() == name:lower()) then
+			return event()
 		end
 	end
 end
+
+function onResourceStart()
+	EventManager().getInstance()
+	addCommandHandler("event",EventManager.create)
+	addEvent("callServer", true)
+	addEventHandler("callServer", resourceRoot,callFunction)
+	setTimer(function()
+		EventManager.create(false,false,"gungame")
+	end,2500,1)
+end
+addEventHandler("onResourceStart",resourceRoot,onResourceStart)
