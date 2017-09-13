@@ -4,6 +4,7 @@ function Lobby:init()
 	super.init(self)
 	self.mapLoader = MapLoader.getInstance()
 	self.map = self.mapLoader:load("lobby")	
+	self.forbiddenControls = {"fire", "aim_weapon", "next_weapon", "previous_weapon"}
 	return self
 end
 
@@ -29,4 +30,7 @@ function Lobby:spawnPlayer(player)
 	player:setHealth(100)
 	player:setArmor(100)
 	player:setMoney(0)
+	for index,control in pairs(self.forbiddenControls) do
+	    player:toggleControl(control, false)
+	end
 end
