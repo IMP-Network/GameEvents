@@ -8,22 +8,6 @@ function getPlayerWeapons(player)
         end
     end
     return weapons
-end	
-
-function table.each(t, index, callback, ...)
-	local args = { ... }
-	if type(index) == 'function' then
-		table.insert(args, 1, callback)
-		callback = index
-		index = false
-	end
-	for k,v in pairs(t) do
-		if index then
-			v = v[index]
-		end
-		callback(v, unpack(args))
-	end
-	return t
 end
 
 function convertNumber(number)  
@@ -37,66 +21,45 @@ function convertNumber(number)
     return formatted
 end
 
-function table.find(t, ...)
-	local args = { ... }
-	if #args == 0 then
-		for k,v in pairs(t) do
-			if v then
-				return k
-			end
-		end
-		return false
-	end
-	
-	local value = table.remove(args)
-	if value == '[nil]' then
-		value = nil
-	end
-	for k,v in pairs(t) do
-		for i,index in ipairs(args) do
-			if type(index) == 'function' then
-				v = index(v)
-			else
-				if index == '[last]' then
-					index = #v
-				end
-				v = v[index]
-			end
-		end
-		if v == value then
-			return k
-		end
+function getTimeLeft(timer)
+	if isTimer(timer) then
+		local ms = getTimerDetails(timer)
+		local m = math.floor(ms/60000)
+		local s = math.floor((ms-m*60000)/1000)
+		return ("%02d:%02d"):format(m,s)
 	end
 	return false
 end
 
-function table.find(tableToSearch, index, value)
-	if not value then
-		value = index
-		index = false
-	elseif value == '[nil]' then
-		value = nil
+function togglePlayerControl(player,toggle)
+	local froozeComponents = {"fire","next_weapon","left","right","jump","sprint","forwards","backwards","walk","previous_weapon","aim_weapon","crouch","enter_exit","vehicle_fire","vehicle_secondary_fire",	"vehicle_left","vehicle_right","vehicle_forward","streer_back","accelerate","brake_reverse","handbrake"}
+	for _,component in pairs(froozeComponents) do
+		toggleControl(player,component,toggle)
 	end
-	for k,v in pairs(tableToSearch) do
-		if index then
-			if v[index] == value then
-				return k
-			end
-		elseif v == value then
-			return k
-		end
-	end
-	return false
 end
 
-function table.maptry(t, callback, ...)
-	for k,v in pairs(t) do
-		t[k] = callback(v, ...)
-		if not t[k] then
-			return false
+function table.random(t) 
+	local r = math.random(#t)
+	local i = 1
+	for k, v in pairs(t) do 
+		if (i == r) then
+			return v
 		end
+		i = i + 1 
 	end
-	return t
+end
+
+function table.count(t)
+	local i = 0
+	for k in pairs(t) do
+		i = i + 1
+	end
+	return i
+end
+
+function table.getFirstKey(t)
+	local k = next(t)
+	return k	
 end
 
 function string:split(sep)
@@ -113,4 +76,34 @@ function string:split(sep)
 		from = to + 1
 	until from == #self + 2
 	return result
+end
+
+function callFunction(func, ...)
+	local fn = _G
+	for i,pathpart in ipairs(func:split(".")) do
+		fn = fn[pathpart]
+	end
+	fn(...)
+end
+
+function cCall(player, func, ...)
+	triggerClientEvent(player, "callClient", resourceRoot, func, ...)
+end
+
+function sCall(func, ...)
+	triggerServerEvent("callServer", resourceRoot, func, ...)
+end
+
+function isEventHandlerAdded(eventName, aElement, aFunction)
+    if type(eventName) == 'string' and isElement(aElement) and type(aFunction) == 'function' then
+        local aFunctions = getEventHandlers(eventName, aElement)
+        if type(aFunctions) == 'table' and #aFunctions > 0 then
+            for i, v in ipairs(aFunctions) do
+                if v == aFunction then
+                    return true
+                end
+            end
+        end
+    end
+    return false
 end
