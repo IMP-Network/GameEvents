@@ -1,60 +1,32 @@
-Lobby = setmetatable({}, EventManager)
-Lobby.__parent = EventManager
-Lobby.instance = nil
-Lobby.MAPS = {
-	[1] = {
-		interior = 17,
-		dimension = 17,
-		positions = {
-			{487.33, -4.62, 1002.08, 180},
-			{484.98, -22.85, 1003.11, 360},
-			{474.81, -14.98, 1003.7, 180}
-		},
-		--id = {}
-	}
-}
+local super = Class("Lobby", EventManager).getSuperclass()
 
-function Lobby.getInstance()
-	if(Lobby.instance == nil) then
-		Lobby.instance = Lobby.create()
-	end
-	return Lobby.instance
-end
-
-function Lobby.create()
-	local self = setmetatable({}, Lobby)
-	
-	local map = Lobby.MAPS[math.random(#Lobby.MAPS)]
-	self.interior = map.interior
-	
-	if (map.id) then
-		self.mapLoader = MapLoader.getInstance()
-		self.mapLoader:load("lobby",map.id)
-	end
-	
+function Lobby:init()
+	super.init(self)
+	self.mapLoader = MapLoader.getInstance()
+	self.map = self.mapLoader:load("lobby")	
 	return self
 end
 
 function Lobby:dispose()
-	self.mapLoader:dispose("lobby")
-	Lobby.instance = nil
+	self.map:dispose()
 end
 
 function Lobby:start(minutes)
-    setTimer(function()
-	    EventManager:getInstance().event:onStart()
-	end, 60000*minutes, 1)
+    self.timer = Timer(function()
+	    super.getInstance():getCurrentEvent():onStart()
+	end, 60000 * minutes, 1)
+	EventHud:setTime(self.timer)
 end
 
 function Lobby:spawnPlayer(player)	
+	local spawn = self.map.spawns[math.random(#self.map.spawns)]
+	player:setPosition(spawn.posX, spawn.posY, spawn.posZ)
+	player:setRotation(0, 0, spawn.rotation)
+	player:setInterior(spawn.interior or 0)
+	player:setDimension(spawn.dimension or 0)
+	player:setCameraTarget(player)
 	player:takeAllWeapons()
-	player:setMoney(0)
 	player:setHealth(100)
-	player:setArmor(player, 100)
-	player:setInterior(self.interior)
-	player:setDimension(self.dimension)
-	
-	local posX, posY, posZ, rot = unpack(self.positions[math.random(#self.positions)])
-	player:setPosition(posX, posY, posZ)
-	player:setRotation(0, 0, rot)
+	player:setArmor(100)
+	player:setMoney(0)
 end
