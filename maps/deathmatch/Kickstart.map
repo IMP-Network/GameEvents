@@ -1,0 +1,30 @@
+<map edf:definitions="editor_main">
+	<spawnpoint posX="-1404.25" posY="1649.26" posZ="1052.98" rotation="175" interior="14"/>
+	<spawnpoint posX="-1429.01" posY="1616.88" posZ="1055.32" rotation="88" interior="14"/>
+	<spawnpoint posX="-1409.12" posY="1618.37" posZ="1055.32" rotation="175" interior="14"/>
+	<spawnpoint posX="-1389.81" posY="1620.28" posZ="1055.32" rotation="261" interior="14"/>
+	<spawnpoint posX="-1378.59" posY="1610.38" posZ="1053.71" rotation="138" interior="14"/>
+	<spawnpoint posX="-1384.58" posY="1603.67" posZ="1053.71" rotation="142" interior="14"/>
+	<spawnpoint posX="-1362.99" posY="1598.62" posZ="1052.86" rotation="180" interior="14"/>
+	<spawnpoint posX="-1394.44" posY="1560.86" posZ="1052.53" rotation="3" interior="14"/>
+	<spawnpoint posX="-1485.01" posY="1569.61" posZ="1052.53" rotation="315" interior="14"/>
+	<spawnpoint posX="-1460.35" posY="1586.43" posZ="1052.75" rotation="353" interior="14"/>
+	<spawnpoint posX="-1466.53" posY="1561.14" posZ="1052.75" rotation="357" interior="14"/>
+	<spawnpoint posX="-1408.27" posY="1589.26" posZ="1052.53" rotation="270" interior="14"/>
+	<spawnpoint posX="-1443.49" posY="1649.3" posZ="1054.41" rotation="182" interior="14"/>
+	<spawnpoint posX="-1461.9" posY="1636.11" posZ="1054.41" rotation="91" interior="14"/>
+	<spawnpoint posX="-1487.04" posY="1630.11" posZ="1056.55" rotation="269" interior="14"/>
+	<spawnpoint posX="-1430.92" posY="1580.85" posZ="1055.73" rotation="359" interior="14"/>
+	<spawnpoint posX="-1431.23" posY="1578.11" posZ="1055.09" rotation="89" interior="14"/>
+	<spawnpoint posX="-1434.37" posY="1577.98" posZ="1054.44" rotation="356" interior="14"/>
+	<spawnpoint posX="-1434.32" posY="1581.08" posZ="1053.79" rotation="359" interior="14"/>
+	<spawnpoint posX="-1434.27" posY="1584.06" posZ="1053.15" rotation="359" interior="14"/>
+	<spawnpoint posX="-1431.12" posY="1584.03" posZ="1053.79" rotation="91" interior="14"/>
+	<spawnpoint posX="-1427.62" posY="1583.94" posZ="1054.44" rotation="306" interior="14"/>
+	<spawnpoint posX="-1427.52" posY="1581.07" posZ="1055.09" rotation="272" interior="14"/>
+	<spawnpoint posX="-1424.36" posY="1563.38" posZ="1052.53" rotation="92" interior="14"/>
+	<spawnpoint posX="-1421.24" posY="1563.44" posZ="1052.53" rotation="268" interior="14"/>
+	<spawnpoint posX="-1351.4" posY="1586.78" posZ="1052.53" rotation="183" interior="14"/>
+	<spawnpoint posX="-1352.02" posY="1591.78" posZ="1052.53" rotation="1" interior="14"/>
+	<spawnpoint posX="-1371.28" posY="1615.72" posZ="1053.56" rotation="175" interior="14"/>
+</map>
